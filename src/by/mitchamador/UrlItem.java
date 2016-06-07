@@ -1,55 +1,51 @@
 package by.mitchamador;
 
+import org.tmatesoft.sqljet.core.SqlJetException;
+import org.tmatesoft.sqljet.core.table.ISqlJetCursor;
+
 import java.io.Serializable;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 /**
  * Created by Viktar on 22.11.2015.
  */
 public class UrlItem implements Serializable {
 
-
-    public String getPattern() {
-        return pattern;
-    }
-
-    public void setPattern(String pattern) {
-        this.pattern = pattern;
-    }
-
-    public String getDir() {
-        return dir;
-    }
-
-    public String getUrl() {
-        return url;
-    }
-
-    public void setUrl(String url) {
-        this.url = url;
-    }
-
-    public String getTorrent() {
-        return torrent;
-    }
-
-    public void setTorrent(String torrent) {
-        this.torrent = torrent;
-    }
-
     public long getHash() {
-        return torrent != null ? hash(torrent) : hash(url);
+        return hash(torrent);
     }
 
-    public String name;
+    public String getDateString() {
+        return SimpleDateFormat.getDateTimeInstance().format(new Date(this.date));
+    }
 
-    private String pattern;
-    private String dir;
-    private String url;
-    private String torrent;
+    public long rowID;
+    public long date;
+    public String name;
+    public String pattern;
+    public String dir;
+    public String url;
+    public String torrent;
+    public long hash;
+
+    public static UrlItem read(ISqlJetCursor cursor) throws SqlJetException {
+        return new UrlItem(cursor.getRowId(), cursor.getInteger("date"), cursor.getString("name"), "", "", cursor.getString("url"), "", cursor.getInteger("hash"));
+    }
 
     public UrlItem(String pattern, String dir) {
+        this(-1, new Date().getTime(), "", pattern, dir, "", "", 0);
+    }
+
+    public UrlItem(long rowID, long date, String name, String pattern, String dir, String url, String torrent, long hash) {
+        this.rowID = rowID;
+        this.date = date;
+        this.name = name;
         this.pattern = pattern;
         this.dir = dir;
+        this.url = url;
+        this.torrent = torrent;
+        this.hash = hash;
     }
 
     private static final long[] byteTable;

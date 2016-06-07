@@ -3,8 +3,6 @@ package by.mitchamador;
 import by.mitchamador.parser.Parser;
 import by.mitchamador.parser.ParserBase;
 import by.mitchamador.parser.ParserEnum;
-import org.mapdb.DB;
-import org.mapdb.HTreeMap;
 
 import java.io.ByteArrayInputStream;
 import java.io.FileOutputStream;
@@ -24,8 +22,6 @@ public class Common {
 
     public int logLevel = LOGLEVEL_DEFAULT;
 
-    public String dbFile = "vDownloader.db";
-
     public boolean dbList;
 
     public boolean test;
@@ -37,11 +33,6 @@ public class Common {
     public boolean forceDownload;
 
     public final static int TIMEOUT = 30 * 1000;
-
-    public DB db;
-
-    public final static String URL_ITEMS_DB = "url_items";
-    public HTreeMap<Long, UrlItem> urlItemsMap;
 
     public final static int BUFFER_SIZE = 16384;
 
@@ -86,37 +77,24 @@ public class Common {
                 } else if ("--debug".equals(arg)) {
                     logLevel = LOGLEVEL_DEBUG;
                 } else if (arg.startsWith("--") && arg.endsWith("login")) {
-                    String name = arg.substring(2, arg.length() - 5);
+                    Parser tParser = findParser(arg.substring(2, arg.length() - 5));
                     c++;
                     if (c < args.length) {
-                        String login = args[c];
-                        for (ParserEnum parserEnum : ParserEnum.values()) {
-                            Parser tParser = parserEnum.getParser();
-                            if (name.equals(((ParserBase) tParser).name)) {
-                                ((ParserBase) tParser).login = login;
-                            }
+                        if (tParser != null) {
+                            ((ParserBase) tParser).login = args[c];
                         }
                     }
                 } else if (arg.startsWith("--") && arg.endsWith("password")) {
-                    String name = arg.substring(2, arg.length() - 8);
+                    Parser tParser = findParser(arg.substring(2, arg.length() - 8));
                     c++;
                     if (c < args.length) {
-                        String password = args[c];
-                        for (ParserEnum parserEnum : ParserEnum.values()) {
-                            Parser tParser = parserEnum.getParser();
-                            if (name.equals(((ParserBase) tParser).name)) {
-                                ((ParserBase) tParser).password = password;
-                            }
+                        if (tParser != null) {
+                            ((ParserBase) tParser).password = args[c];
                         }
                     }
                 } else if ("--test".equals(arg)) {
                     logLevel = LOGLEVEL_VERBOSE;
                     test = true;
-                } else if ("--dbfile".equals(arg)) {
-                    c++;
-                    if (c < args.length) {
-                        dbFile = args[c];
-                    }
                 } else if ("--aria2rpc".equals(arg)) {
                     c++;
                     if (c < args.length) {
@@ -137,6 +115,16 @@ public class Common {
                 test = true;
             }
         }
+    }
+
+    private Parser findParser(String name) {
+        for (ParserEnum parserEnum : ParserEnum.values()) {
+            Parser tParser = parserEnum.getParser();
+            if (name.equals(((ParserBase) tParser).name)) {
+                return tParser;
+            }
+        }
+        return null;
     }
 
     public void log(int logLevel, String message) {

@@ -19,9 +19,9 @@ public class Aria2 {
 
     public static void sendToAria2(Common common, UrlItem item) throws Exception {
         try {
-            if (item.getUrl().startsWith("magnet:")) {
+            if (item.torrent.startsWith("magnet:")) {
                 if (allowSendToAria2(common, item)) {
-                    String str = "download \"" + item.name + "\" to " + (item.getDir() == null || item.getDir().isEmpty() ? "default dir" : item.getDir());
+                    String str = "download \"" + item.name + "\" to " + (item.dir == null || item.dir.isEmpty() ? "default dir" : item.dir);
                     if (!common.test) {
                         sendUriToAria2(common, item);
                     } else {
@@ -29,18 +29,18 @@ public class Aria2 {
                     }
                     common.log(Common.LOGLEVEL_DEFAULT, str);
                 } else {
-                    common.log(Common.LOGLEVEL_VERBOSE, "already downloaded \"" + item.name + "\" to " + (item.getDir() == null || item.getDir().isEmpty() ? "default dir" : item.getDir()));
+                    common.log(Common.LOGLEVEL_VERBOSE, "already downloaded \"" + item.name + "\" to " + (item.dir == null || item.dir.isEmpty() ? "default dir" : item.dir));
                 }
 
             } else {
                 if (common.cookies == null) {
-                    item.setTorrent(new BASE64Encoder().encode(Jsoup.connect(item.getUrl()).timeout(Common.TIMEOUT).ignoreContentType(true).execute().bodyAsBytes()));
+                    item.torrent = new BASE64Encoder().encode(Jsoup.connect(item.torrent).timeout(Common.TIMEOUT).ignoreContentType(true).execute().bodyAsBytes());
                 } else {
-                    item.setTorrent(new BASE64Encoder().encode(Jsoup.connect(item.getUrl()).timeout(Common.TIMEOUT).ignoreContentType(true).cookies(common.cookies).execute().bodyAsBytes()));
+                    item.torrent = new BASE64Encoder().encode(Jsoup.connect(item.torrent).timeout(Common.TIMEOUT).ignoreContentType(true).cookies(common.cookies).execute().bodyAsBytes());
                 }
 
                 if (allowSendToAria2(common, item)) {
-                    String str = "download torrent \"" + item.name + "\" to " + (item.getDir() == null || item.getDir().isEmpty() ? "default dir" : item.getDir());
+                    String str = "download torrent \"" + item.name + "\" to " + (item.dir == null || item.dir.isEmpty() ? "default dir" : item.dir);
                     if (!common.test) {
                         sendUriToAria2(common, item);
                     } else {
@@ -48,7 +48,7 @@ public class Aria2 {
                     }
                     common.log(Common.LOGLEVEL_DEFAULT, str);
                 } else {
-                    common.log(Common.LOGLEVEL_VERBOSE, "already downloaded \"" + item.name + "\" to " + (item.getDir() == null || item.getDir().isEmpty() ? "default dir" : item.getDir()));
+                    common.log(Common.LOGLEVEL_VERBOSE, "already downloaded \"" + item.name + "\" to " + (item.dir == null || item.dir.isEmpty() ? "default dir" : item.dir));
                 }
             }
             saveUrlItemToDb(common, item);
@@ -59,7 +59,7 @@ public class Aria2 {
 
     private static boolean allowSendToAria2(Common common, UrlItem item) {
         try {
-            return common.forceDownload | !common.urlItemsMap.containsKey(item.getHash());
+            return common.forceDownload | UrlItemDB.containsHash(item.getHash()) == -1;
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -68,7 +68,7 @@ public class Aria2 {
 
     private static void saveUrlItemToDb(Common common, UrlItem item) {
         try {
-            common.urlItemsMap.put(item.getHash(), item);
+            item.rowID = UrlItemDB.insertItem(item);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -80,24 +80,24 @@ public class Aria2 {
         JSONObject json = new JSONObject();
         json.put("jsonrpc", "2.0");
         json.put("id", "qwer");
-        if (item.getUrl().startsWith("magnet:")) {
+        if (item.torrent.startsWith("magnet:")) {
             json.put("method", "aria2.addUri");
 
             ArrayList uris = new ArrayList();
-            uris.add(item.getUrl());
+            uris.add(item.torrent);
 
             params.add(new JSONArray(uris));
         } else {
             json.put("method", "aria2.addTorrent");
 
-            params.add(item.getTorrent());
+            params.add(item.torrent);
 
             params.add(new JSONArray());
         }
 
-        if (item.getDir() != null && !item.getDir().isEmpty()) {
+        if (item.dir != null && !item.dir.isEmpty()) {
             JSONObject o = new JSONObject();
-            o.put("dir", item.getDir());
+            o.put("dir", item.dir);
             params.add(o);
         }
 

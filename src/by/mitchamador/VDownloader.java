@@ -5,9 +5,8 @@ import by.mitchamador.parser.ParserEnum;
 import org.jsoup.Connection;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
-import org.mapdb.DBMaker;
+import org.tmatesoft.sqljet.core.SqlJetException;
 
-import java.io.File;
 import java.net.CookieHandler;
 import java.net.CookieManager;
 import java.text.SimpleDateFormat;
@@ -19,105 +18,104 @@ public class VDownloader {
     private Common common;
 
     public VDownloader(String[] args) throws Exception {
-
         common = new Common();
         common.parseArgs(args);
-
     }
 
     public void run() throws Exception {
 
-        common.log(Common.LOGLEVEL_VERBOSE, "=== started ===");
-
         try {
-            common.db = DBMaker
-                    .fileDB(new File(common.dbFile))
-                    .transactionDisable()
-                    .closeOnJvmShutdown()
-                    .make();
-            common.urlItemsMap = common.db.hashMap(Common.URL_ITEMS_DB);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+            common.log(Common.LOGLEVEL_VERBOSE, "=== started ===");
 
-        if (common.dbList) {
-            for (long key : common.urlItemsMap.keySet()) {
-                System.out.println(common.urlItemsMap.get(key).name + " " + Long.toHexString(key));
-            }
-            return;
-        }
+            UrlItemDB.open();
 
-        if (common.urlList == null) return;
-
-        for (String contentUrl : common.urlList.keySet()) {
-            if (contentUrl == null) continue;
-
-            try {
-
-                Parser parser = null;
-                for (ParserEnum parserEnum : ParserEnum.values()) {
-                    Parser tParser = parserEnum.getParser();
-                    if (tParser.match(contentUrl)) {
-                        parser = tParser;
-                        break;
-                    }
+            if (common.dbList) {
+                ArrayList<UrlItem> items = UrlItemDB.getAllItemsList();
+                for (UrlItem item : items) {
+                    System.out.println(item.getDateString() + " " + item.name + " " + item.url);
                 }
+                return;
+            }
 
-                if (parser == null) continue;
+            if (common.urlList == null) return;
 
-                // make sure cookies is turn on
-                CookieHandler.setDefault(new CookieManager());
+            for (String contentUrl : common.urlList.keySet()) {
+                if (contentUrl == null) continue;
 
-                common.cookies = parser.login(common);
+                try {
 
-                ArrayList<UrlItem> urlItemList = common.urlList.get(contentUrl);
-
-                if (urlItemList.isEmpty()) {
-                    urlItemList.add(new UrlItem(".*", ""));
-                } else {
-                    for (UrlItem urlItem : urlItemList) {
-                        if (urlItem.getPattern() == null || urlItem.getPattern().isEmpty()) continue;
-
-                        if (urlItem.getPattern().contains("%DATE%")) {
-                            urlItem.setPattern(urlItem.getPattern().replace("%DATE%", new SimpleDateFormat("dd/MM/yyyy").format(Calendar.getInstance().getTime())));
+                    Parser parser = null;
+                    for (ParserEnum parserEnum : ParserEnum.values()) {
+                        Parser tParser = parserEnum.getParser();
+                        if (tParser.match(contentUrl)) {
+                            parser = tParser;
+                            break;
                         }
                     }
-                }
 
-                Document doc = getDocument(contentUrl, parser);
+                    if (parser == null) continue;
 
-                ArrayList<String[]> list = parser.parse(contentUrl, doc);
+                    // make sure cookies is turn on
+                    CookieHandler.setDefault(new CookieManager());
 
-                if (list == null) continue;
+                    common.cookies = parser.login(common);
 
-                for (String[] s : list) {
+                    ArrayList<UrlItem> urlItemList = common.urlList.get(contentUrl);
 
-                    for (UrlItem urlItem : urlItemList) {
+                    if (urlItemList.isEmpty()) {
+                        urlItemList.add(new UrlItem(".*", ""));
+                    } else {
+                        for (UrlItem urlItem : urlItemList) {
+                            if (urlItem.pattern == null || urlItem.pattern.isEmpty()) continue;
 
-                        if (urlItem.getPattern() == null || urlItem.getPattern().isEmpty() || s[0].matches(urlItem.getPattern())) {
-                            urlItem.name = s[0];
-                            try {
-                                if (s[2] != null && !s[2].isEmpty()) {
-                                    urlItem.setUrl(s[2]);
-                                    Aria2.sendToAria2(common, urlItem);
-                                } else {
-                                    for (String[] s2 : parser.parseTopic(getDocument(s[1], parser))) {
-                                        urlItem.setUrl(s2[2]);
-                                        Aria2.sendToAria2(common, urlItem);
-                                    }
-                                }
-                            } catch (Exception e) {
-                                e.printStackTrace();
+                            if (urlItem.pattern.contains("%DATE%")) {
+                                urlItem.pattern = urlItem.pattern.replace("%DATE%", new SimpleDateFormat("dd/MM/yyyy").format(Calendar.getInstance().getTime()));
                             }
                         }
                     }
-                }
-            } catch (Exception e) {
-                common.log(Common.LOGLEVEL_DEFAULT, "error parsing url: " + contentUrl);
-            }
-        }
 
-        common.log(Common.LOGLEVEL_VERBOSE, "=== ended ===");
+                    Document doc = getDocument(contentUrl, parser);
+
+                    ArrayList<String[]> list = parser.parse(contentUrl, doc);
+
+                    if (list == null) continue;
+
+                    for (String[] s : list) {
+
+                        for (UrlItem urlItem : urlItemList) {
+
+                            if (urlItem.pattern == null || urlItem.pattern.isEmpty() || s[0].matches(urlItem.pattern)) {
+                                urlItem.name = s[0];
+                                try {
+                                    if (s[2] != null && !s[2].isEmpty()) {
+                                        urlItem.url = (s[1] == null || s[1].isEmpty()) ? contentUrl : s[1];
+                                        urlItem.torrent = s[2];
+                                        Aria2.sendToAria2(common, urlItem);
+                                    } else {
+                                        for (String[] s2 : parser.parseTopic(getDocument(s[1], parser))) {
+                                            urlItem.url = s2[1];
+                                            urlItem.torrent = s2[2];
+                                            Aria2.sendToAria2(common, urlItem);
+                                        }
+                                    }
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                        }
+                    }
+                } catch (Exception e) {
+                    common.log(Common.LOGLEVEL_DEFAULT, "error parsing url: " + contentUrl);
+                }
+            }
+        } finally {
+            try {
+                UrlItemDB.close();
+            } catch (SqlJetException e) {
+                e.printStackTrace();
+            }
+            common.log(Common.LOGLEVEL_VERBOSE, "=== ended ===");
+        }
     }
 
     private Document getDocument(String contentUrl, Parser parser) throws Exception {

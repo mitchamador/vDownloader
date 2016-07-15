@@ -8,7 +8,8 @@ public enum ParserEnum {
     PARSER_RIPERAM(new ParserRiperAm()),
     PARSER_RUTOR(new ParserRutor()),
     PARSER_RUTRACKER(new ParserRutracker()),
-    PARSER_NNMCLUB(new ParserNnmClub());
+    PARSER_NNMCLUB(new ParserNnmClub()),
+    PARSER_TORRENT2(new ParserTorrent2());
 
     public Parser getParser() {
         return parser;

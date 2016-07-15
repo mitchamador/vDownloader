@@ -1,6 +1,7 @@
 package by.mitchamador;
 
 import by.mitchamador.parser.Parser;
+import by.mitchamador.parser.ParserBase;
 import by.mitchamador.parser.ParserEnum;
 import org.jsoup.Connection;
 import org.jsoup.Jsoup;
@@ -12,6 +13,7 @@ import java.net.CookieManager;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 
 public class VDownloader {
 
@@ -44,6 +46,27 @@ public class VDownloader {
 
                 try {
 
+                    ArrayList<UrlItem> urlItemList = common.urlList.get(contentUrl);
+
+                    if (urlItemList.isEmpty()) {
+                        urlItemList.add(new UrlItem(".*", ""));
+                    } else {
+                        for (UrlItem urlItem : urlItemList) {
+                            if (urlItem.pattern == null || urlItem.pattern.isEmpty()) continue;
+
+                            if (urlItem.pattern.contains("%DATE1%")) {
+                                urlItem.pattern = urlItem.pattern.replace("%DATE1%", new SimpleDateFormat("dd/MM/yyyy").format(Calendar.getInstance().getTime()));
+                            }
+                            if (urlItem.pattern.contains("%DOM2SERIE%")) {
+                                Calendar start = Calendar.getInstance();
+                                start.clear();
+                                start.set(2004, Calendar.MAY, 11);
+                                long number = 1 + (new Date().getTime() - start.getTimeInMillis()) / (24 * 60 * 60 * 1000);
+                                urlItem.pattern = urlItem.pattern.replace("%DOM2SERIE%", number + "");
+                            }
+                        }
+                    }
+
                     Parser parser = null;
                     for (ParserEnum parserEnum : ParserEnum.values()) {
                         Parser tParser = parserEnum.getParser();
@@ -60,18 +83,8 @@ public class VDownloader {
 
                     common.cookies = parser.login(common);
 
-                    ArrayList<UrlItem> urlItemList = common.urlList.get(contentUrl);
-
-                    if (urlItemList.isEmpty()) {
-                        urlItemList.add(new UrlItem(".*", ""));
-                    } else {
-                        for (UrlItem urlItem : urlItemList) {
-                            if (urlItem.pattern == null || urlItem.pattern.isEmpty()) continue;
-
-                            if (urlItem.pattern.contains("%DATE%")) {
-                                urlItem.pattern = urlItem.pattern.replace("%DATE%", new SimpleDateFormat("dd/MM/yyyy").format(Calendar.getInstance().getTime()));
-                            }
-                        }
+                    if (((ParserBase) parser).loggedIn && (common.cookies == null || common.cookies.isEmpty())) {
+                        common.log(Common.LOGLEVEL_DEFAULT, "empty cookies, " + ((ParserBase) parser).name + " login failed");
                     }
 
                     Document doc = getDocument(contentUrl, parser);
@@ -84,8 +97,8 @@ public class VDownloader {
 
                         for (UrlItem urlItem : urlItemList) {
 
-                            if (urlItem.pattern == null || urlItem.pattern.isEmpty() || s[0].matches(urlItem.pattern)) {
-                                urlItem.name = s[0];
+                            if (urlItem.pattern == null || urlItem.pattern.isEmpty() || s[0].replace("\n", "").matches(urlItem.pattern)) {
+                                urlItem.name = s[0].replace("\n", "");
                                 try {
                                     if (s[2] != null && !s[2].isEmpty()) {
                                         urlItem.url = (s[1] == null || s[1].isEmpty()) ? contentUrl : s[1];

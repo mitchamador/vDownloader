@@ -31,8 +31,8 @@ public class ParserRutracker extends Parser implements ParserInterface {
     }
 
     @Override
-    public Map<String, String> login(Common common) throws Exception {
-        if (loggedIn || login == null || password == null) return cookies;
+    public void login(Common common) throws Exception {
+        if (loggedIn || login == null || password == null) return;
 
         String loginUrl = "http://login.rutracker.org/forum/login.php";
 
@@ -64,9 +64,9 @@ public class ParserRutracker extends Parser implements ParserInterface {
 
         cookies = res.cookies();
 
-        loggedIn = cookies.size() > 0;
+        loggedIn = true;
 
-        return cookies;
+        return;
     }
 
     @Override

@@ -36,8 +36,6 @@ public class Common {
 
     public final static int BUFFER_SIZE = 16384;
 
-    public Map<String, String> cookies;
-
     public Common() {
     }
 

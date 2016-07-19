@@ -26,8 +26,8 @@ public class ParserRutor extends Parser implements ParserInterface {
     }
 
     @Override
-    public Map<String, String> login(Common common) {
-        return cookies;
+    public void login(Common common) {
+        return;
     }
 
     @Override

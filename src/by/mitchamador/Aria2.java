@@ -1,7 +1,10 @@
 package by.mitchamador;
 
+import by.mitchamador.parser.Parser;
+import by.mitchamador.parser.ParserInterface;
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.jsoup.Connection;
 import org.jsoup.Jsoup;
 import sun.misc.BASE64Encoder;
 
@@ -17,7 +20,7 @@ import java.util.ArrayList;
  */
 public class Aria2 {
 
-    public static void sendToAria2(Common common, UrlItem item) throws Exception {
+    public static void sendToAria2(Common common, UrlItem item, Parser parser) throws Exception {
         try {
             if (item.torrent.startsWith("magnet:")) {
                 if (allowSendToAria2(common, item)) {
@@ -33,11 +36,17 @@ public class Aria2 {
                 }
 
             } else {
-                if (common.cookies == null) {
-                    item.torrent = new BASE64Encoder().encode(Jsoup.connect(item.torrent).timeout(Common.TIMEOUT).ignoreContentType(true).execute().bodyAsBytes());
-                } else {
-                    item.torrent = new BASE64Encoder().encode(Jsoup.connect(item.torrent).timeout(Common.TIMEOUT).ignoreContentType(true).cookies(common.cookies).execute().bodyAsBytes());
+                Connection con = Jsoup.connect(item.torrent).timeout(Common.TIMEOUT).ignoreContentType(true);
+
+                if (parser.cookies != null) {
+                    con = con.cookies(parser.cookies);
                 }
+
+                if (parser.getParser().getUserAgent() != null) {
+                    con = con.userAgent(parser.getParser().getUserAgent());
+                }
+
+                item.torrent = new BASE64Encoder().encode(con.execute().bodyAsBytes());
 
                 if (allowSendToAria2(common, item)) {
                     String str = "download torrent \"" + item.name + "\" to " + (item.dir == null || item.dir.isEmpty() ? "default dir" : item.dir);

@@ -32,8 +32,8 @@ public class ParserRiperAm extends Parser implements ParserInterface {
     }
 
     @Override
-    public  Map<String, String> login(Common common) throws Exception {
-        if (loggedIn || login == null || password == null) return cookies;
+    public void login(Common common) throws Exception {
+        if (loggedIn || login == null || password == null) return;
 
         String loginUrl = "http://riperam.org/ucp.php?mode=login";
 
@@ -67,12 +67,12 @@ public class ParserRiperAm extends Parser implements ParserInterface {
 
         loggedIn = true;
 
-        return cookies;
+        return;
     }
 
     @Override
     public String getUserAgent() {
-        return null;
+        return "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.103 Safari/537.36";
     }
 
     @Override

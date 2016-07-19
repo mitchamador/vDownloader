@@ -26,8 +26,8 @@ public class ParserNnmClub extends Parser implements ParserInterface {
     }
 
     @Override
-    public Map<String, String> login(Common common) {
-        return null;
+    public void login(Common common) {
+        return;
     }
 
     @Override

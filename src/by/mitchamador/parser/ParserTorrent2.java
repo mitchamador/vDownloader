@@ -26,8 +26,8 @@ public class ParserTorrent2 extends Parser implements ParserInterface {
     }
 
     @Override
-    public  Map<String, String> login(Common common) throws Exception {
-        return cookies;
+    public void login(Common common) throws Exception {
+        return;
     }
 
     @Override

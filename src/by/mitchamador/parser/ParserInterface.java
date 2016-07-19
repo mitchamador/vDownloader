@@ -13,7 +13,7 @@ public interface ParserInterface {
 
     boolean match(String url);
 
-    Map<String, String> login(Common common) throws Exception;
+    void login(Common common) throws Exception;
 
     String getUserAgent();
 

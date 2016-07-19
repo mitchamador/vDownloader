@@ -81,13 +81,13 @@ public class VDownloader {
                     CookieHandler.setDefault(new CookieManager());
 
                     parser.setCookies();
-                    common.cookies = parser.getParser().login(common);
+                    parser.getParser().login(common);
 
-                    if (parser.loggedIn && (common.cookies == null || common.cookies.isEmpty())) {
+                    if (parser.loggedIn && (parser.cookies == null || parser.cookies.isEmpty())) {
                         common.log(Common.LOGLEVEL_DEFAULT, "empty cookies, " + parser.name + " login failed");
                     }
 
-                    Document doc = getDocument(contentUrl, parser.getParser());
+                    Document doc = getDocument(contentUrl, parser);
 
                     ArrayList<String[]> list = parser.getParser().parse(contentUrl, doc);
 
@@ -103,12 +103,12 @@ public class VDownloader {
                                     if (s[2] != null && !s[2].isEmpty()) {
                                         urlItem.url = (s[1] == null || s[1].isEmpty()) ? contentUrl : s[1];
                                         urlItem.torrent = s[2];
-                                        Aria2.sendToAria2(common, urlItem);
+                                        Aria2.sendToAria2(common, urlItem, parser);
                                     } else {
-                                        for (String[] s2 : parser.getParser().parseTopic(getDocument(s[1], parser.getParser()))) {
+                                        for (String[] s2 : parser.getParser().parseTopic(getDocument(s[1], parser))) {
                                             urlItem.url = s2[1];
                                             urlItem.torrent = s2[2];
-                                            Aria2.sendToAria2(common, urlItem);
+                                            Aria2.sendToAria2(common, urlItem, parser);
                                         }
                                     }
                                 } catch (Exception e) {
@@ -131,18 +131,18 @@ public class VDownloader {
         }
     }
 
-    private Document getDocument(String contentUrl, ParserInterface parser) throws Exception {
+    private Document getDocument(String contentUrl, Parser parser) throws Exception {
 
         Connection con = Jsoup
                 .connect(contentUrl)
                 .timeout(Common.TIMEOUT);
 
-        if (common.cookies != null) {
-            con = con.cookies(common.cookies);
+        if (parser.cookies != null) {
+            con = con.cookies(parser.cookies);
         }
 
-        if (parser.getUserAgent() != null) {
-            con = con.userAgent(parser.getUserAgent());
+        if (parser.getParser().getUserAgent() != null) {
+            con = con.userAgent(parser.getParser().getUserAgent());
         }
 
         return con.get();

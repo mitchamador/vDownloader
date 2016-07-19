@@ -1,7 +1,6 @@
 package by.mitchamador;
 
 import by.mitchamador.parser.Parser;
-import by.mitchamador.parser.ParserInterface;
 import by.mitchamador.parser.ParserEnum;
 import org.jsoup.Connection;
 import org.jsoup.Jsoup;

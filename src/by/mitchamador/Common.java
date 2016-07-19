@@ -1,7 +1,7 @@
 package by.mitchamador;
 
 import by.mitchamador.parser.Parser;
-import by.mitchamador.parser.ParserBase;
+import by.mitchamador.parser.ParserInterface;
 import by.mitchamador.parser.ParserEnum;
 
 import java.io.ByteArrayInputStream;
@@ -77,19 +77,27 @@ public class Common {
                 } else if ("--debug".equals(arg)) {
                     logLevel = LOGLEVEL_DEBUG;
                 } else if (arg.startsWith("--") && arg.endsWith("login")) {
-                    Parser tParser = findParser(arg.substring(2, arg.length() - 5));
+                    ParserInterface tParser = findParser(arg.substring(2, arg.length() - 5));
                     c++;
                     if (c < args.length) {
                         if (tParser != null) {
-                            ((ParserBase) tParser).login = args[c];
+                            ((Parser) tParser).login = args[c];
                         }
                     }
                 } else if (arg.startsWith("--") && arg.endsWith("password")) {
-                    Parser tParser = findParser(arg.substring(2, arg.length() - 8));
+                    ParserInterface tParser = findParser(arg.substring(2, arg.length() - 8));
                     c++;
                     if (c < args.length) {
                         if (tParser != null) {
-                            ((ParserBase) tParser).password = args[c];
+                            ((Parser) tParser).password = args[c];
+                        }
+                    }
+                } else if (arg.startsWith("--") && arg.endsWith("cookies")) {
+                    ParserInterface tParser = findParser(arg.substring(2, arg.length() - 7));
+                    c++;
+                    if (c < args.length) {
+                        if (tParser != null) {
+                            ((Parser) tParser).cookiesArg = args[c];
                         }
                     }
                 } else if ("--test".equals(arg)) {
@@ -107,21 +115,13 @@ public class Common {
                 }
                 c++;
             }
-
-            if (urlList.isEmpty()) {
-                urlList.put("http://rutor.org/torrent/471190/beguwij-v-labirinte-ispytanie-ognjom_maze-runner-the-scorch-trials-2015-hdrip-ot-scarabey-licenzija", new ArrayList<UrlItem>(Arrays.asList(new UrlItem[] {new UrlItem("", "")})));
-
-                logLevel = LOGLEVEL_VERBOSE;
-                test = true;
-            }
-        }
+       }
     }
 
-    private Parser findParser(String name) {
+    private ParserInterface findParser(String name) {
         for (ParserEnum parserEnum : ParserEnum.values()) {
-            Parser tParser = parserEnum.getParser();
-            if (name.equals(((ParserBase) tParser).name)) {
-                return tParser;
+            if (name.equals(parserEnum.getParser().name)) {
+                return parserEnum.getParser().getParser();
             }
         }
         return null;

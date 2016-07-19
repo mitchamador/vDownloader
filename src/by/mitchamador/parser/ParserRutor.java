@@ -10,9 +10,10 @@ import java.util.Map;
 /**
  * Created by vicok on 31.05.2016.
  */
-public class ParserRutor extends ParserBase implements Parser {
+public class ParserRutor extends Parser implements ParserInterface {
 
     public ParserRutor() {
+        setParser(this);
         name = "rutor";
     }
 

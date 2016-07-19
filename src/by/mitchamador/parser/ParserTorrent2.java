@@ -1,24 +1,19 @@
 package by.mitchamador.parser;
 
 import by.mitchamador.Common;
-import org.jsoup.Connection;
-import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
-import org.jsoup.nodes.TextNode;
-import org.jsoup.select.Elements;
 
-import java.net.URLEncoder;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Map;
 
 /**
  * Created by vicok on 31.05.2016.
  */
-public class ParserTorrent2 extends ParserBase implements Parser {
+public class ParserTorrent2 extends Parser implements ParserInterface {
 
     public ParserTorrent2() {
+        setParser(this);
         name = "torrent2";
     }
 

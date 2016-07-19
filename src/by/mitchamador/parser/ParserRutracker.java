@@ -15,9 +15,10 @@ import java.util.Map;
 /**
  * Created by vicok on 31.05.2016.
  */
-public class ParserRutracker extends ParserBase implements Parser {
+public class ParserRutracker extends Parser implements ParserInterface {
 
     public ParserRutracker() {
+        setParser(this);
         name = "rutracker";
     }
 

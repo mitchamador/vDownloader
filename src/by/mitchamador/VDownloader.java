@@ -1,7 +1,7 @@
 package by.mitchamador;
 
 import by.mitchamador.parser.Parser;
-import by.mitchamador.parser.ParserBase;
+import by.mitchamador.parser.ParserInterface;
 import by.mitchamador.parser.ParserEnum;
 import org.jsoup.Connection;
 import org.jsoup.Jsoup;
@@ -69,9 +69,8 @@ public class VDownloader {
 
                     Parser parser = null;
                     for (ParserEnum parserEnum : ParserEnum.values()) {
-                        Parser tParser = parserEnum.getParser();
-                        if (tParser.match(contentUrl)) {
-                            parser = tParser;
+                        if (parserEnum.getParser().getParser().match(contentUrl)) {
+                            parser = parserEnum.getParser();
                             break;
                         }
                     }
@@ -81,15 +80,16 @@ public class VDownloader {
                     // make sure cookies is turn on
                     CookieHandler.setDefault(new CookieManager());
 
-                    common.cookies = parser.login(common);
+                    parser.setCookies();
+                    common.cookies = parser.getParser().login(common);
 
-                    if (((ParserBase) parser).loggedIn && (common.cookies == null || common.cookies.isEmpty())) {
-                        common.log(Common.LOGLEVEL_DEFAULT, "empty cookies, " + ((ParserBase) parser).name + " login failed");
+                    if (parser.loggedIn && (common.cookies == null || common.cookies.isEmpty())) {
+                        common.log(Common.LOGLEVEL_DEFAULT, "empty cookies, " + parser.name + " login failed");
                     }
 
-                    Document doc = getDocument(contentUrl, parser);
+                    Document doc = getDocument(contentUrl, parser.getParser());
 
-                    ArrayList<String[]> list = parser.parse(contentUrl, doc);
+                    ArrayList<String[]> list = parser.getParser().parse(contentUrl, doc);
 
                     if (list == null) continue;
 
@@ -105,7 +105,7 @@ public class VDownloader {
                                         urlItem.torrent = s[2];
                                         Aria2.sendToAria2(common, urlItem);
                                     } else {
-                                        for (String[] s2 : parser.parseTopic(getDocument(s[1], parser))) {
+                                        for (String[] s2 : parser.getParser().parseTopic(getDocument(s[1], parser.getParser()))) {
                                             urlItem.url = s2[1];
                                             urlItem.torrent = s2[2];
                                             Aria2.sendToAria2(common, urlItem);
@@ -131,7 +131,7 @@ public class VDownloader {
         }
     }
 
-    private Document getDocument(String contentUrl, Parser parser) throws Exception {
+    private Document getDocument(String contentUrl, ParserInterface parser) throws Exception {
 
         Connection con = Jsoup
                 .connect(contentUrl)

@@ -16,9 +16,10 @@ import java.util.Map;
 /**
  * Created by vicok on 31.05.2016.
  */
-public class ParserRiperAm extends ParserBase implements Parser {
+public class ParserRiperAm extends Parser implements ParserInterface {
 
     public ParserRiperAm() {
+        setParser(this);
         name = "riperam";
     }
 

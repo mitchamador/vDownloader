@@ -1,28 +1,50 @@
 package by.mitchamador.parser;
 
-import by.mitchamador.Common;
-import org.jsoup.nodes.Document;
-
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Map;
 
 /**
  * Created by vicok on 31.05.2016.
  */
-public interface Parser {
+public class Parser {
 
-    boolean match(String url);
+    public boolean loggedIn = false;
+    public Map<String, String> cookies = null;
+    public String name = null;
 
-    Map<String, String> login(Common common) throws Exception;
+    public String login = null;
+    public String password = null;
+    public String cookiesArg;
 
-    String getUserAgent();
+    private ParserInterface parser;
 
-    ArrayList<String[]> parse(String url, Document doc) throws Exception;
+    public Parser() {
+    }
 
-    ArrayList<String[]> parseRss(Document doc) throws Exception;
+    public void setCookies() {
+        if (cookiesArg == null || cookiesArg.trim().isEmpty()) return;
 
-    ArrayList<String[]> parseTopic(Document doc) throws Exception;
+        cookies = new HashMap<String, String>();
 
-    ArrayList<String[]> parseTopicList(Document doc) throws Exception;
+        try {
+            for (String pair : cookiesArg.split(";")) {
+                String[] s = pair.split("=");
+                cookies.put(s[0], s[1]);
+            }
 
+            loggedIn = true;
+            cookiesArg = null;
+        } catch (Exception e) {
+        }
+
+        return;
+    }
+
+    public ParserInterface getParser() {
+        return parser;
+    }
+
+    public void setParser(ParserInterface parser) {
+        this.parser = parser;
+    }
 }

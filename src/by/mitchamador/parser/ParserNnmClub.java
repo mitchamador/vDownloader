@@ -10,9 +10,10 @@ import java.util.Map;
 /**
  * Created by vicok on 31.05.2016.
  */
-public class ParserNnmClub extends ParserBase implements Parser {
+public class ParserNnmClub extends Parser implements ParserInterface {
 
     public ParserNnmClub() {
+        setParser(this);
         name = "nnmclub";
     }
 

@@ -79,11 +79,12 @@ public class ParserRiperAm extends Parser implements ParserInterface {
     public ArrayList<String[]> parse(String url, Document doc) throws Exception {
         if (url.endsWith(".xml")) {
             return parseRss(doc);
-        } else if (url.endsWith(".html")) {
+        } else if (url.matches(".*&t=[0-9]+")) {
             return parseTopic(doc);
-        } else {
+        } else if (url.matches(".*\\?f=[0-9]+")){
             return parseTopicList(doc);
         }
+        return null;
     }
 
     @Override
@@ -112,9 +113,9 @@ public class ParserRiperAm extends Parser implements ParserInterface {
 
         try {
             result.add(new String[] {
-                            doc.getElementsByAttribute("riper_name").get(0).attr("riper_name"),
+                            doc.getElementsByClass("first").get(0).child(0).text(),
                             "",
-                            doc.getElementsByAttribute("riper_name").get(0).absUrl("href"),
+                            doc.getElementsByAttributeValueMatching("href", "file.php\\?id=[0-9]+").get(0).absUrl("href"),
                     }
             );
         } catch (Exception e) {

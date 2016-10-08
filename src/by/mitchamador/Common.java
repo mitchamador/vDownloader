@@ -54,19 +54,23 @@ public class Common {
 
                         ArrayList<UrlItem> patternList = urlList.get(args[c]);
 
-                        String pattern = "";
-                        if (c + 2 < args.length && "--pattern".equals(args[c + 1])) {
-                            c += 2;
-                            pattern = args[c];
-                        }
+                        while (true) {
+                            String pattern = "";
+                            if (c + 2 < args.length && "--pattern".equals(args[c + 1])) {
+                                c += 2;
+                                pattern = args[c];
+                            }
 
-                        String dir = "";
-                        if (c + 2 < args.length && "--dir".equals(args[c + 1])) {
-                            c += 2;
-                            dir = args[c];
-                        }
+                            String dir = "";
+                            if (c + 2 < args.length && "--dir".equals(args[c + 1])) {
+                                c += 2;
+                                dir = args[c];
+                            }
 
-                        patternList.add(new UrlItem(pattern, dir));
+                            if (pattern.isEmpty() && dir.isEmpty()) break;
+
+                            patternList.add(new UrlItem(pattern, dir));
+                        }
                     }
                 } else if ("--quiet".equals(arg)) {
                     logLevel = LOGLEVEL_NONE;

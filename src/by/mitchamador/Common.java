@@ -108,7 +108,7 @@ public class Common {
                     }
                 } else if ("--list".equals(arg)) {
                     dbList = true;
-                } else if ("--forcedownload".equals(arg)) {
+                } else if ("--force".equals(arg)) {
                     forceDownload = true;
                 }
                 c++;

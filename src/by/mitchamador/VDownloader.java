@@ -13,6 +13,8 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
 
 public class VDownloader {
 
@@ -50,7 +52,10 @@ public class VDownloader {
                     if (urlItemList.isEmpty()) {
                         urlItemList.add(new UrlItem(".*", ""));
                     } else {
-                        for (UrlItem urlItem : urlItemList) {
+                        int c = 0;
+                        while (c < urlItemList.size()) {
+                            UrlItem urlItem = urlItemList.get(c);
+
                             if (urlItem.pattern == null || urlItem.pattern.isEmpty()) continue;
 
                             if (urlItem.pattern.contains("%DATE1%")) {
@@ -63,6 +68,16 @@ public class VDownloader {
                                 long number = 1 + (new Date().getTime() - start.getTimeInMillis()) / (24 * 60 * 60 * 1000);
                                 urlItem.pattern = urlItem.pattern.replace("%DOM2SERIE%", number + "");
                             }
+                            try {
+                                Pattern.compile(urlItem.pattern);
+                            } catch (PatternSyntaxException e) {
+                                common.log(Common.LOGLEVEL_DEFAULT, "error parsing pattern: " + urlItem.pattern);
+
+                                urlItemList.remove(c--);
+
+                            }
+
+                            c++;
                         }
                     }
 
@@ -86,6 +101,8 @@ public class VDownloader {
                         common.log(Common.LOGLEVEL_DEFAULT, "empty cookies, " + parser.name + " login failed");
                     }
 
+                    if (urlItemList.isEmpty()) continue;
+
                     Document doc = getDocument(contentUrl, parser);
 
                     ArrayList<String[]> list = parser.getParser().parse(contentUrl, doc);
@@ -94,10 +111,12 @@ public class VDownloader {
 
                     for (String[] s : list) {
 
-                        for (UrlItem urlItem : urlItemList) {
+                        s[0] = s[0].replace("\n", "").trim();
 
-                            if (urlItem.pattern == null || urlItem.pattern.isEmpty() || s[0].replace("\n", "").matches(urlItem.pattern)) {
-                                urlItem.name = s[0].replace("\n", "");
+                        for (UrlItem urlItem : urlItemList) {
+                            if (urlItem.pattern == null || urlItem.pattern.isEmpty() || s[0].matches(urlItem.pattern)) {
+                                urlItem.name = s[0];
+
                                 try {
                                     if (s[2] != null && !s[2].isEmpty()) {
                                         urlItem.url = (s[1] == null || s[1].isEmpty()) ? contentUrl : s[1];

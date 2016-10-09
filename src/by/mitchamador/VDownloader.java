@@ -47,6 +47,18 @@ public class VDownloader {
 
                 try {
 
+                    Parser parser = null;
+                    for (ParserEnum parserEnum : ParserEnum.values()) {
+                        if (parserEnum.getParser().match(contentUrl)) {
+                            parser = parserEnum.getParser();
+                            break;
+                        }
+                    }
+
+                    if (parser == null) continue;
+
+                    if (parser.getCommon() == null) parser.setCommon(common);
+
                     ArrayList<UrlItem> urlItemList = common.urlList.get(contentUrl);
 
                     if (urlItemList.isEmpty()) {
@@ -81,31 +93,9 @@ public class VDownloader {
                         }
                     }
 
-                    Parser parser = null;
-                    for (ParserEnum parserEnum : ParserEnum.values()) {
-                        if (parserEnum.getParser().getParser().match(contentUrl)) {
-                            parser = parserEnum.getParser();
-                            break;
-                        }
-                    }
-
-                    if (parser == null) continue;
-
-                    // make sure cookies is turn on
-                    CookieHandler.setDefault(new CookieManager());
-
-                    parser.setCookies();
-                    parser.getParser().login(common);
-
-                    if (parser.loggedIn && (parser.cookies == null || parser.cookies.isEmpty())) {
-                        common.log(Common.LOGLEVEL_DEFAULT, "empty cookies, " + parser.name + " login failed");
-                    }
-
                     if (urlItemList.isEmpty()) continue;
 
-                    Document doc = getDocument(contentUrl, parser);
-
-                    ArrayList<String[]> list = parser.getParser().parse(contentUrl, doc);
+                    ArrayList<String[]> list = parser.parse(contentUrl);
 
                     if (list == null) continue;
 
@@ -123,7 +113,7 @@ public class VDownloader {
                                         urlItem.torrent = s[2];
                                         Aria2.sendToAria2(common, urlItem, parser);
                                     } else {
-                                        for (String[] s2 : parser.getParser().parseTopic(getDocument(s[1], parser))) {
+                                        for (String[] s2 : parser.parse(s[1])) {
                                             urlItem.url = s2[1];
                                             urlItem.torrent = s2[2];
                                             Aria2.sendToAria2(common, urlItem, parser);
@@ -147,23 +137,6 @@ public class VDownloader {
             }
             common.log(Common.LOGLEVEL_VERBOSE, "=== ended ===");
         }
-    }
-
-    private Document getDocument(String contentUrl, Parser parser) throws Exception {
-
-        Connection con = Jsoup
-                .connect(contentUrl)
-                .timeout(Common.TIMEOUT);
-
-        if (parser.cookies != null) {
-            con = con.cookies(parser.cookies);
-        }
-
-        if (parser.getParser().getUserAgent() != null) {
-            con = con.userAgent(parser.getParser().getUserAgent());
-        }
-
-        return con.get();
     }
 
     public static void main(String[] args) {

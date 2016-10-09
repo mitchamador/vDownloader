@@ -79,27 +79,27 @@ public class Common {
                 } else if ("--debug".equals(arg)) {
                     logLevel = LOGLEVEL_DEBUG;
                 } else if (arg.startsWith("--") && arg.endsWith("login")) {
-                    ParserInterface tParser = findParser(arg.substring(2, arg.length() - 5));
+                    Parser tParser = findParser(arg.substring(2, arg.length() - 5));
                     c++;
                     if (c < args.length) {
                         if (tParser != null) {
-                            ((Parser) tParser).login = args[c];
+                            tParser.login = args[c];
                         }
                     }
                 } else if (arg.startsWith("--") && arg.endsWith("password")) {
-                    ParserInterface tParser = findParser(arg.substring(2, arg.length() - 8));
+                    Parser tParser = findParser(arg.substring(2, arg.length() - 8));
                     c++;
                     if (c < args.length) {
                         if (tParser != null) {
-                            ((Parser) tParser).password = args[c];
+                            tParser.password = args[c];
                         }
                     }
                 } else if (arg.startsWith("--") && arg.endsWith("cookies")) {
-                    ParserInterface tParser = findParser(arg.substring(2, arg.length() - 7));
+                    Parser tParser = findParser(arg.substring(2, arg.length() - 7));
                     c++;
                     if (c < args.length) {
                         if (tParser != null) {
-                            ((Parser) tParser).cookiesArg = args[c];
+                            tParser.cookiesArg = args[c];
                         }
                     }
                 } else if ("--test".equals(arg)) {
@@ -120,10 +120,10 @@ public class Common {
        }
     }
 
-    private ParserInterface findParser(String name) {
+    private Parser findParser(String name) {
         for (ParserEnum parserEnum : ParserEnum.values()) {
             if (name.equals(parserEnum.getParser().name)) {
-                return parserEnum.getParser().getParser();
+                return parserEnum.getParser();
             }
         }
         return null;

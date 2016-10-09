@@ -22,44 +22,24 @@ public class Aria2 {
 
     public static void sendToAria2(Common common, UrlItem item, Parser parser) throws Exception {
         try {
-            if (item.torrent.startsWith("magnet:")) {
-                if (allowSendToAria2(common, item)) {
-                    String str = "download \"" + item.name + "\" to " + (item.dir == null || item.dir.isEmpty() ? "default dir" : item.dir);
-                    if (!common.test) {
-                        sendUriToAria2(common, item);
-                    } else {
-                        str = "simulate " + str;
-                    }
-                    common.log(Common.LOGLEVEL_DEFAULT, str);
-                } else {
-                    common.log(Common.LOGLEVEL_VERBOSE, "already downloaded \"" + item.name + "\" to " + (item.dir == null || item.dir.isEmpty() ? "default dir" : item.dir));
-                }
-
-            } else {
-                Connection con = Jsoup.connect(item.torrent).timeout(Common.TIMEOUT).ignoreContentType(true);
-
-                if (parser.cookies != null) {
-                    con = con.cookies(parser.cookies);
-                }
-
-                if (parser.getParser().getUserAgent() != null) {
-                    con = con.userAgent(parser.getParser().getUserAgent());
-                }
-
-                item.torrent = new BASE64Encoder().encode(con.execute().bodyAsBytes());
-
-                if (allowSendToAria2(common, item)) {
-                    String str = "download torrent \"" + item.name + "\" to " + (item.dir == null || item.dir.isEmpty() ? "default dir" : item.dir);
-                    if (!common.test) {
-                        sendUriToAria2(common, item);
-                    } else {
-                        str = "simulate " + str;
-                    }
-                    common.log(Common.LOGLEVEL_DEFAULT, str);
-                } else {
-                    common.log(Common.LOGLEVEL_VERBOSE, "already downloaded \"" + item.name + "\" to " + (item.dir == null || item.dir.isEmpty() ? "default dir" : item.dir));
-                }
+            String str = "download ";
+            if (!item.torrent.startsWith("magnet:")) {
+                str += "torrent ";
+                item.torrent = new BASE64Encoder().encode(parser.getFile(item.torrent));
             }
+
+            if (allowSendToAria2(common, item)) {
+                str += "\"" + item.name + "\" to " + (item.dir == null || item.dir.isEmpty() ? "default dir" : item.dir);
+                if (!common.test) {
+                    sendUriToAria2(common, item);
+                } else {
+                    str = "simulate " + str;
+                }
+                common.log(Common.LOGLEVEL_DEFAULT, str);
+            } else {
+                common.log(Common.LOGLEVEL_VERBOSE, "already downloaded \"" + item.name + "\" to " + (item.dir == null || item.dir.isEmpty() ? "default dir" : item.dir));
+            }
+
             saveUrlItemToDb(common, item);
         } catch (Exception e) {
             common.log(Common.LOGLEVEL_DEFAULT, e.getMessage() + " in " + item.name);

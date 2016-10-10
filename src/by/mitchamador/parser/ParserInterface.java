@@ -17,7 +17,7 @@ public interface ParserInterface {
 
     String getUserAgent();
 
-    ArrayList<String[]> parse(String url, Document doc) throws Exception;
+    ArrayList<String[]> parse(String url) throws Exception;
 
     ArrayList<String[]> parseRss(Document doc) throws Exception;
 

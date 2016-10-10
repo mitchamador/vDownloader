@@ -36,13 +36,13 @@ public class ParserTorrent2 extends Parser implements ParserInterface {
     }
 
     @Override
-    public ArrayList<String[]> parse(String url, Document doc) throws Exception {
+    public ArrayList<String[]> parse(String url) throws Exception {
         if (url.endsWith(".xml")) {
-            return parseRss(doc);
+            return parseRss(getDocument(url, false));
         } else if (url.endsWith(".html")) {
-            return parseTopic(doc);
+            return parseTopic(getDocument(url, false));
         } else {
-            return parseTopicList(doc);
+            return parseTopicList(getDocument(url, false));
         }
     }
 

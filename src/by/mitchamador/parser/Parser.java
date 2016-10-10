@@ -72,18 +72,7 @@ public class Parser {
 
     public ArrayList<String[]> parse(String url) throws Exception {
         try {
-
-            // make sure cookies is turn on
-            CookieHandler.setDefault(new CookieManager());
-
-            setCookies();
-            parser.login(common);
-
-            if (loggedIn && (cookies == null || cookies.isEmpty())) {
-                common.log(Common.LOGLEVEL_DEFAULT, "empty cookies, " + name + " login failed");
-            }
-
-            return parser.parse(url, getDocument(url));
+            return parser.parse(url);
         } catch (Exception e) {
             throw e;
         }
@@ -105,7 +94,16 @@ public class Parser {
 
     }
 
-    private Document getDocument(String contentUrl) throws Exception {
+    public Document getDocument(String contentUrl, boolean needLogIn) throws Exception {
+
+        if (needLogIn) {
+            setCookies();
+            parser.login(common);
+
+            if (loggedIn && (cookies == null || cookies.isEmpty())) {
+                common.log(Common.LOGLEVEL_DEFAULT, "empty cookies, " + name + " login failed");
+            }
+        }
 
         Connection con = Jsoup
                 .connect(contentUrl)

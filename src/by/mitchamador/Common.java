@@ -7,6 +7,8 @@ import by.mitchamador.parser.ParserEnum;
 import java.io.ByteArrayInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.net.CookieHandler;
+import java.net.CookieManager;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -37,6 +39,8 @@ public class Common {
     public final static int BUFFER_SIZE = 16384;
 
     public Common() {
+        // make sure cookies is turn on
+        CookieHandler.setDefault(new CookieManager());
     }
 
     public void parseArgs(String[] args) {

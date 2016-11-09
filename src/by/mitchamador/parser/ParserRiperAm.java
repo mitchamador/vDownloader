@@ -79,9 +79,11 @@ public class ParserRiperAm extends Parser implements ParserInterface {
     public ArrayList<String[]> parse(String url) throws Exception {
         if (url.endsWith(".xml")) {
             return parseRss(getDocument(url, false));
-        } else if (url.matches(".*&t=[0-9]+")) {
+        //} else if (url.matches(".*&t=[0-9]+")) {
+        } else if (url.matches(".*-t[0-9]+\\.html")) {
             return parseTopic(getDocument(url, true));
-        } else if (url.matches(".*\\?f=[0-9]+")){
+        //} else if (url.matches(".*\\?f=[0-9]+")){
+        } else if (url.matches(".*/")){
             return parseTopicList(getDocument(url, true));
         }
         return null;

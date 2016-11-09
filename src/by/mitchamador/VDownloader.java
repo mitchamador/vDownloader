@@ -113,14 +113,19 @@ public class VDownloader {
                                         urlItem.torrent = s[2];
                                         Aria2.sendToAria2(common, urlItem, parser);
                                     } else {
-                                        for (String[] s2 : parser.parse(s[1])) {
-                                            urlItem.url = s2[1];
-                                            urlItem.torrent = s2[2];
-                                            Aria2.sendToAria2(common, urlItem, parser);
+                                        ArrayList<String[]> sList = parser.parse(s[1]);
+                                        if (sList == null) {
+                                            common.log(Common.LOGLEVEL_DEFAULT, "error parsing url (no matching item): " + s[1]);
+                                        } else {
+                                            for (String[] s2 : sList) {
+                                                urlItem.url = s2[1];
+                                                urlItem.torrent = s2[2];
+                                                Aria2.sendToAria2(common, urlItem, parser);
+                                            }
                                         }
                                     }
                                 } catch (Exception e) {
-                                    e.printStackTrace();
+                                    common.log(Common.LOGLEVEL_DEFAULT, e.getMessage());
                                 }
                             }
                         }

@@ -2,6 +2,7 @@ package by.mitchamador.parser;
 
 import by.mitchamador.Common;
 import org.jsoup.Connection;
+import org.jsoup.HttpStatusException;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 
@@ -117,7 +118,19 @@ public class Parser {
             con = con.userAgent(parser.getUserAgent());
         }
 
-        return con.get();
+        Document d = null;
+
+        try {
+            d = con.get();
+        } catch (IOException e) {
+            if (e instanceof HttpStatusException) {
+                if (((HttpStatusException) e).getStatusCode() == 404) {
+                    common.log(Common.LOGLEVEL_DEFAULT, contentUrl + " : not found");
+                }
+            }
+        }
+
+        return d == null ? new Document("http://localhost") : d;
     }
 
 }

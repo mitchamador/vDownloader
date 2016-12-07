@@ -2,17 +2,9 @@ package by.mitchamador;
 
 import by.mitchamador.parser.Parser;
 import by.mitchamador.parser.ParserEnum;
-import org.jsoup.Connection;
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
 import org.tmatesoft.sqljet.core.SqlJetException;
 
-import java.net.CookieHandler;
-import java.net.CookieManager;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
@@ -70,23 +62,11 @@ public class VDownloader {
 
                             if (urlItem.pattern == null || urlItem.pattern.isEmpty()) continue;
 
-                            if (urlItem.pattern.contains("%DATE1%")) {
-                                urlItem.pattern = urlItem.pattern.replace("%DATE1%", new SimpleDateFormat("dd/MM/yyyy").format(Calendar.getInstance().getTime()));
-                            }
-                            if (urlItem.pattern.contains("%DOM2SERIE%")) {
-                                Calendar start = Calendar.getInstance();
-                                start.clear();
-                                start.set(2004, Calendar.MAY, 11);
-                                long number = 1 + (new Date().getTime() - start.getTimeInMillis()) / (24 * 60 * 60 * 1000);
-                                urlItem.pattern = urlItem.pattern.replace("%DOM2SERIE%", number + "");
-                            }
                             try {
                                 Pattern.compile(urlItem.pattern);
                             } catch (PatternSyntaxException e) {
                                 common.log(Common.LOGLEVEL_DEFAULT, "error parsing pattern: " + urlItem.pattern);
-
                                 urlItemList.remove(c--);
-
                             }
 
                             c++;

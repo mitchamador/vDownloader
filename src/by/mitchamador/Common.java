@@ -1,7 +1,6 @@
 package by.mitchamador;
 
 import by.mitchamador.parser.Parser;
-import by.mitchamador.parser.ParserInterface;
 import by.mitchamador.parser.ParserEnum;
 
 import java.io.ByteArrayInputStream;
@@ -10,7 +9,9 @@ import java.io.IOException;
 import java.net.CookieHandler;
 import java.net.CookieManager;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
 
 /**
  * Created by vicok on 31.05.2016.
@@ -73,7 +74,7 @@ public class Common {
 
                             if (pattern.isEmpty() && dir.isEmpty()) break;
 
-                            patternList.add(new UrlItem(pattern, dir));
+                            patternList.add(new UrlItem(UrlItem.filterTags(pattern), dir));
                         }
                     }
                 } else if ("--quiet".equals(arg)) {

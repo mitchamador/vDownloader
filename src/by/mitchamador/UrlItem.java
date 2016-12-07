@@ -5,6 +5,7 @@ import org.tmatesoft.sqljet.core.table.ISqlJetCursor;
 
 import java.io.Serializable;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 
 /**
@@ -76,6 +77,20 @@ public class UrlItem implements Serializable {
             h = (h * hmult) ^ ht[data[i] & 0xff];
         }
         return h;
+    }
+
+    public static String filterTags(String pattern) {
+        if (pattern.contains("%DATE1%")) {
+            pattern = pattern.replace("%DATE1%", new SimpleDateFormat("dd/MM/yyyy").format(Calendar.getInstance().getTime()));
+        }
+        if (pattern.contains("%DOM2SERIE%")) {
+            Calendar start = Calendar.getInstance();
+            start.clear();
+            start.set(2004, Calendar.MAY, 11);
+            long number = 1 + (new Date().getTime() - start.getTimeInMillis()) / (24 * 60 * 60 * 1000);
+            pattern = pattern.replace("%DOM2SERIE%", number + "");
+        }
+        return pattern;
     }
 }
 

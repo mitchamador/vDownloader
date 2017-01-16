@@ -90,6 +90,9 @@ public class UrlItem implements Serializable {
             long number = 1 + (new Date().getTime() - start.getTimeInMillis()) / (24 * 60 * 60 * 1000);
             pattern = pattern.replace("%DOM2SERIE%", number + "");
         }
+        if (pattern.contains("%SERIESPATTERN%")) {
+            pattern = pattern.replace("%SERIESPATTERN%", "\\[(S[0-9]{2}|([0-9]{2}x)?(01((-[0-9]{2})? из [0-9]{2})?)?)]");
+        }
         return pattern;
     }
 }

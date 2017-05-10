@@ -19,7 +19,7 @@ public class ParserRutor extends Parser implements ParserInterface {
 
     @Override
     public boolean match(String url) {
-        if (url.startsWith("http://rutor.is") || url.startsWith("http://rutor.info")) {
+        if (url.startsWith("http://rutor.is") || url.startsWith("http://rutor.info") || url.startsWith("http://live-rutor.org")) {
             return true;
         }
         return false;

@@ -18,6 +18,8 @@ import java.util.Map;
  */
 public class ParserRiperAm extends Parser implements ParserInterface {
 
+    String url = null;
+
     public ParserRiperAm() {
         setParser(this);
         name = "riperam";
@@ -25,7 +27,8 @@ public class ParserRiperAm extends Parser implements ParserInterface {
 
     @Override
     public boolean match(String url) {
-        if (url.startsWith("http://www.riper.am") || url.startsWith("http://riperam.org")) {
+        this.url = url;
+        if (url.startsWith("http://www.riper.am") || url.startsWith("http://riperam.org") || url.startsWith("http://bt.kubyshka.org")) {
             return true;
         }
         return false;
@@ -33,9 +36,18 @@ public class ParserRiperAm extends Parser implements ParserInterface {
 
     @Override
     public void login(Common common) throws Exception {
-        if (loggedIn || login == null || password == null) return;
+        if (loggedIn || login == null || password == null || url == null) return;
 
-        String loginUrl = "http://riperam.org/ucp.php?mode=login";
+        String loginUrl = null;
+        if (url.startsWith("http://www.riper.am")) {
+            loginUrl = "http://www.riper.am";
+        } else if (url.startsWith("http://riperam.org")) {
+            loginUrl = "http://riperam.org";
+        } else if (url.startsWith("http://bt.kubyshka.org")) {
+            loginUrl = "http://bt.kubyshka.org";
+        }
+
+        loginUrl += "/ucp.php?mode=login";
 
         Map<String, String> data = new HashMap<String, String>();
 

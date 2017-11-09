@@ -8,6 +8,9 @@ import java.util.ArrayList;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
+import static by.mitchamador.Common.LogLevel.LOGLEVEL_DEBUG;
+import static by.mitchamador.Common.LogLevel.LOGLEVEL_VERBOSE;
+
 public class VDownloader {
 
     private Common common;
@@ -20,7 +23,7 @@ public class VDownloader {
     public void run() throws Exception {
 
         try {
-            common.log(Common.LOGLEVEL_VERBOSE, "=== started ===");
+            common.log(LOGLEVEL_DEBUG, "=== started ===");
 
             UrlItemDB.open();
 
@@ -65,7 +68,7 @@ public class VDownloader {
                             try {
                                 Pattern.compile(urlItem.pattern);
                             } catch (PatternSyntaxException e) {
-                                common.log(Common.LOGLEVEL_DEFAULT, "error parsing pattern: " + urlItem.pattern);
+                                common.log(LOGLEVEL_VERBOSE, "error parsing pattern: " + urlItem.pattern);
                                 urlItemList.remove(c--);
                             }
 
@@ -95,7 +98,7 @@ public class VDownloader {
                                     } else {
                                         ArrayList<String[]> sList = parser.parse(s[1]);
                                         if (sList == null) {
-                                            common.log(Common.LOGLEVEL_DEFAULT, "error parsing url (no matching item): " + s[1]);
+                                            common.log(LOGLEVEL_VERBOSE, "error parsing url (no matching item): " + s[1]);
                                         } else {
                                             for (String[] s2 : sList) {
                                                 urlItem.url = s2[1];
@@ -105,13 +108,13 @@ public class VDownloader {
                                         }
                                     }
                                 } catch (Exception e) {
-                                    common.log(Common.LOGLEVEL_DEFAULT, e.getMessage());
+                                    common.log(LOGLEVEL_VERBOSE, e.getMessage());
                                 }
                             }
                         }
                     }
                 } catch (Exception e) {
-                    common.log(Common.LOGLEVEL_DEFAULT, "error parsing url: " + contentUrl);
+                    common.log(LOGLEVEL_VERBOSE, "error parsing url: " + contentUrl);
                 }
             }
         } finally {
@@ -120,7 +123,7 @@ public class VDownloader {
             } catch (SqlJetException e) {
                 e.printStackTrace();
             }
-            common.log(Common.LOGLEVEL_VERBOSE, "=== ended ===");
+            common.log(LOGLEVEL_DEBUG, "=== ended ===");
         }
     }
 

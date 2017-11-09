@@ -1,11 +1,8 @@
 package by.mitchamador;
 
 import by.mitchamador.parser.Parser;
-import by.mitchamador.parser.ParserInterface;
 import org.json.JSONArray;
 import org.json.JSONObject;
-import org.jsoup.Connection;
-import org.jsoup.Jsoup;
 import sun.misc.BASE64Encoder;
 
 import java.io.BufferedInputStream;
@@ -15,6 +12,8 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 
+import static by.mitchamador.Common.LogLevel.*;
+
 /**
  * Created by vicok on 01.06.2016.
  */
@@ -22,27 +21,29 @@ public class Aria2 {
 
     public static void sendToAria2(Common common, UrlItem item, Parser parser) throws Exception {
         try {
-            String str = "download ";
+            String str = "";
+            str += common.appendLog(LOGLEVEL_VERBOSE, "download ");
             if (!item.torrent.startsWith("magnet:")) {
-                str += "torrent ";
+                str += common.appendLog(LOGLEVEL_VERBOSE, "torrent ");
                 item.torrent = new BASE64Encoder().encode(parser.getFile(item.torrent));
             }
 
             if (allowSendToAria2(common, item)) {
-                str += "\"" + item.name + "\" to " + (item.dir == null || item.dir.isEmpty() ? "default dir" : item.dir);
+                str += common.appendLog(LOGLEVEL_DEFAULT, "\"" + item.name + "\"");
+                str += common.appendLog(LOGLEVEL_VERBOSE, " to " + (item.dir == null || item.dir.isEmpty() ? "default dir" : item.dir));
                 if (!common.test) {
                     sendUriToAria2(common, item);
                 } else {
-                    str = "simulate " + str;
+                    str = common.appendLog(LOGLEVEL_VERBOSE, "simulate ") + str;
                 }
-                common.log(Common.LOGLEVEL_DEFAULT, str);
+                common.log(LOGLEVEL_DEFAULT, str);
             } else {
-                common.log(Common.LOGLEVEL_VERBOSE, "already downloaded \"" + item.name + "\" to " + (item.dir == null || item.dir.isEmpty() ? "default dir" : item.dir));
+                common.log(LOGLEVEL_VERBOSE, "already downloaded \"" + item.name + "\" to " + (item.dir == null || item.dir.isEmpty() ? "default dir" : item.dir));
             }
 
             saveUrlItemToDb(common, item);
         } catch (Exception e) {
-            common.log(Common.LOGLEVEL_DEFAULT, e.getMessage() + " in " + item.name);
+            common.log(LOGLEVEL_VERBOSE, e.getMessage() + " in " + item.name);
         }
     }
 
@@ -124,9 +125,9 @@ public class Aria2 {
 
         int responseCode = conn.getResponseCode();
 
-        common.log(Common.LOGLEVEL_DEBUG, "Sending 'POST' request to URL : " + common.aria2Url);
-        common.log(Common.LOGLEVEL_DEBUG, "Post parameters : " + postParams);
-        common.log(Common.LOGLEVEL_DEBUG, "Response Code : " + responseCode);
+        common.log(LOGLEVEL_DEBUG, "Sending 'POST' request to URL : " + common.aria2Url);
+        common.log(LOGLEVEL_DEBUG, "Post parameters : " + postParams);
+        common.log(LOGLEVEL_DEBUG, "Response Code : " + responseCode);
 
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 
@@ -144,7 +145,7 @@ public class Aria2 {
 
             result = new JSONObject(new String(outputStream.toByteArray()));
 
-            common.log(Common.LOGLEVEL_DEBUG, result.toString(4));
+            common.log(LOGLEVEL_DEBUG, result.toString(4));
         } else {
             throw new Exception("aria2 response " + responseCode + ":" + conn.getResponseMessage());
         }

@@ -13,17 +13,21 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 
+import static by.mitchamador.Common.LogLevel.*;
+
 /**
  * Created by vicok on 31.05.2016.
  */
 public class Common {
 
-    public static final int LOGLEVEL_NONE = 0;
-    public static final int LOGLEVEL_DEFAULT = 1;
-    public static final int LOGLEVEL_VERBOSE = 2;
-    public static final int LOGLEVEL_DEBUG = 3;
+    public enum LogLevel {
+        LOGLEVEL_NONE,
+        LOGLEVEL_DEFAULT,
+        LOGLEVEL_VERBOSE,
+        LOGLEVEL_DEBUG,
+    }
 
-    public int logLevel = LOGLEVEL_DEFAULT;
+    public LogLevel logLevel = LOGLEVEL_DEFAULT;
 
     public boolean dbList;
 
@@ -108,7 +112,6 @@ public class Common {
                         }
                     }
                 } else if ("--test".equals(arg)) {
-                    logLevel = LOGLEVEL_VERBOSE;
                     test = true;
                 } else if ("--aria2rpc".equals(arg)) {
                     c++;
@@ -134,8 +137,12 @@ public class Common {
         return null;
     }
 
-    public void log(int logLevel, String message) {
-        if (this.logLevel >= logLevel) {
+    public String appendLog(LogLevel logLevel, String message) {
+        return this.logLevel.compareTo(logLevel) >= 0 ? message : "";
+    }
+
+    public void log(LogLevel logLevel, String message) {
+        if (this.logLevel.compareTo(logLevel) >= 0) {
             System.out.println(SimpleDateFormat.getDateTimeInstance().format(new Date()) + " " + message);
         }
     }

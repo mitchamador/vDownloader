@@ -7,11 +7,12 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 
 import java.io.IOException;
-import java.net.CookieHandler;
-import java.net.CookieManager;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+
+import static by.mitchamador.Common.LogLevel.LOGLEVEL_DEFAULT;
+import static by.mitchamador.Common.LogLevel.LOGLEVEL_VERBOSE;
 
 /**
  * Created by vicok on 31.05.2016.
@@ -102,7 +103,7 @@ public class Parser {
             parser.login(common);
 
             if (loggedIn && (cookies == null || cookies.isEmpty())) {
-                common.log(Common.LOGLEVEL_DEFAULT, "empty cookies, " + name + " login failed");
+                common.log(LOGLEVEL_VERBOSE, "empty cookies, " + name + " login failed");
             }
         }
 
@@ -125,7 +126,7 @@ public class Parser {
         } catch (IOException e) {
             if (e instanceof HttpStatusException) {
                 if (((HttpStatusException) e).getStatusCode() == 404) {
-                    common.log(Common.LOGLEVEL_DEFAULT, contentUrl + " : not found");
+                    common.log(LOGLEVEL_DEFAULT, contentUrl + " : not found");
                 }
             }
         }

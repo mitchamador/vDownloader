@@ -115,7 +115,7 @@ public class ParserRutracker extends Parser implements ParserInterface {
     public ArrayList<String[]> parseTopicList(Document doc) throws Exception {
         ArrayList<String[]> result = new ArrayList<String[]>();
 
-        for (Element e : doc.getElementsByAttributeValueStarting("class", "topictitle")) {
+        for (Element e : doc.getElementsByAttributeValueStarting("id", "tt-")) {
             try {
                 result.add(new String[] {
                                 e.text(),

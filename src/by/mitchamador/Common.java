@@ -1,5 +1,7 @@
 package by.mitchamador;
 
+import by.mitchamador.downloader.Downloader;
+import by.mitchamador.downloader.DownloaderEnum;
 import by.mitchamador.parser.Parser;
 import by.mitchamador.parser.ParserEnum;
 
@@ -36,12 +38,17 @@ public class Common {
     public HashMap<String, ArrayList<UrlItem>> urlList;
 
     public String aria2Url = "http://192.168.1.2:6800/jsonrpc";
+    public String transmissionUrl = "http://192.168.1.2:9091/transmission/rpc";
 
     public boolean forceDownload;
 
     public final static int TIMEOUT = 30 * 1000;
 
     public final static int BUFFER_SIZE = 16384;
+
+    public String downloaderName = "aria2";
+
+    public Downloader downloader = null;
 
     public Common() {
         // make sure cookies is turn on
@@ -113,10 +120,20 @@ public class Common {
                     }
                 } else if ("--test".equals(arg)) {
                     test = true;
+                } else if ("--downloader".equals(arg)) {
+                    c++;
+                    if (c < args.length) {
+                        downloaderName = args[c];
+                    }
                 } else if ("--aria2rpc".equals(arg)) {
                     c++;
                     if (c < args.length) {
                         aria2Url = args[c];
+                    }
+                } else if ("--transmissionrpc".equals(arg)) {
+                    c++;
+                    if (c < args.length) {
+                        transmissionUrl = args[c];
                     }
                 } else if ("--list".equals(arg)) {
                     dbList = true;
@@ -126,6 +143,26 @@ public class Common {
                 c++;
             }
        }
+
+        for (DownloaderEnum downloaderEnum : DownloaderEnum.values()) {
+            if (downloaderEnum.getDownloader().match(downloaderName)) {
+                downloader = downloaderEnum.getDownloader();
+                break;
+            }
+        }
+
+    }
+
+    public void download(UrlItem urlItem, Parser parser) {
+        if (downloader == null) {
+            downloader = new Downloader();
+        }
+
+        if (downloader.getCommon() == null) {
+            downloader.setCommon(this);
+        }
+
+        downloader.download(urlItem, parser);
     }
 
     private Parser findParser(String name) {

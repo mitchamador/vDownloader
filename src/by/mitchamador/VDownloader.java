@@ -94,7 +94,7 @@ public class VDownloader {
                                     if (s[2] != null && !s[2].isEmpty()) {
                                         urlItem.url = (s[1] == null || s[1].isEmpty()) ? contentUrl : s[1];
                                         urlItem.torrent = s[2];
-                                        Aria2.sendToAria2(common, urlItem, parser);
+                                        common.download(urlItem, parser);
                                     } else {
                                         ArrayList<String[]> sList = parser.parse(s[1]);
                                         if (sList == null) {
@@ -103,7 +103,7 @@ public class VDownloader {
                                             for (String[] s2 : sList) {
                                                 urlItem.url = s2[1];
                                                 urlItem.torrent = s2[2];
-                                                Aria2.sendToAria2(common, urlItem, parser);
+                                                common.download(urlItem, parser);
                                             }
                                         }
                                     }

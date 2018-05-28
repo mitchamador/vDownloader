@@ -28,7 +28,7 @@ public class DownloaderTransmission extends Downloader implements DownloaderInte
             params.put("dir", item.dir);
         }
 
-        params.put("paused", true);
+        params.put("paused", false);
 
         json.put("arguments", params);
 

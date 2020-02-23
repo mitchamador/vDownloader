@@ -61,7 +61,7 @@
               <archive>
                 <manifest>
                   <mainClass>
-                    by.mitchamador.VDownloader
+                    by.mitchamador.vdownloader.VDownloader
                   </mainClass>
                 </manifest>
               </archive>

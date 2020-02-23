@@ -1,7 +1,7 @@
-package by.mitchamador.downloader;
+package by.mitchamador.vdownloader.downloader;
 
-import by.mitchamador.downloader.items.Aria2;
-import by.mitchamador.downloader.items.Transmission;
+import by.mitchamador.vdownloader.downloader.items.Aria2;
+import by.mitchamador.vdownloader.downloader.items.Transmission;
 
 public enum DownloaderEnum {
     DOWNLOADER_ARIA2(new Aria2()),

@@ -1,15 +1,12 @@
-package by.mitchamador;
+package by.mitchamador.vdownloader;
 
-import by.mitchamador.parser.Parser;
-import by.mitchamador.parser.ParserEnum;
+import by.mitchamador.vdownloader.parser.Parser;
+import by.mitchamador.vdownloader.parser.ParserEnum;
 import org.tmatesoft.sqljet.core.SqlJetException;
 
 import java.util.ArrayList;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
-
-import static by.mitchamador.Common.LogLevel.LOGLEVEL_DEBUG;
-import static by.mitchamador.Common.LogLevel.LOGLEVEL_VERBOSE;
 
 public class VDownloader {
 
@@ -23,7 +20,7 @@ public class VDownloader {
     public void run() throws Exception {
 
         try {
-            common.log(LOGLEVEL_DEBUG, "=== started ===");
+            common.log(Common.LogLevel.LOGLEVEL_DEBUG, "=== started ===");
 
             UrlItemDB.open();
 
@@ -68,7 +65,7 @@ public class VDownloader {
                             try {
                                 Pattern.compile(urlItem.pattern);
                             } catch (PatternSyntaxException e) {
-                                common.log(LOGLEVEL_VERBOSE, "error parsing pattern: " + urlItem.pattern);
+                                common.log(Common.LogLevel.LOGLEVEL_VERBOSE, "error parsing pattern: " + urlItem.pattern);
                                 urlItemList.remove(c--);
                             }
 
@@ -98,7 +95,7 @@ public class VDownloader {
                                     } else {
                                         ArrayList<String[]> sList = parser.parse(s[1]);
                                         if (sList == null) {
-                                            common.log(LOGLEVEL_VERBOSE, "error parsing url (no matching item): " + s[1]);
+                                            common.log(Common.LogLevel.LOGLEVEL_VERBOSE, "error parsing url (no matching item): " + s[1]);
                                         } else {
                                             for (String[] s2 : sList) {
                                                 urlItem.url = s2[1];
@@ -108,13 +105,13 @@ public class VDownloader {
                                         }
                                     }
                                 } catch (Exception e) {
-                                    common.log(LOGLEVEL_VERBOSE, e.getMessage());
+                                    common.log(Common.LogLevel.LOGLEVEL_VERBOSE, e.getMessage());
                                 }
                             }
                         }
                     }
                 } catch (Exception e) {
-                    common.log(LOGLEVEL_VERBOSE, "error parsing url: " + contentUrl);
+                    common.log(Common.LogLevel.LOGLEVEL_VERBOSE, "error parsing url: " + contentUrl);
                 }
             }
         } finally {
@@ -123,7 +120,7 @@ public class VDownloader {
             } catch (SqlJetException e) {
                 e.printStackTrace();
             }
-            common.log(LOGLEVEL_DEBUG, "=== ended ===");
+            common.log(Common.LogLevel.LOGLEVEL_DEBUG, "=== ended ===");
         }
     }
 

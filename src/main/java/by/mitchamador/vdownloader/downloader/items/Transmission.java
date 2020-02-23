@@ -1,7 +1,7 @@
-package by.mitchamador.downloader.items;
+package by.mitchamador.vdownloader.downloader.items;
 
-import by.mitchamador.UrlItem;
-import by.mitchamador.downloader.Downloader;
+import by.mitchamador.vdownloader.UrlItem;
+import by.mitchamador.vdownloader.downloader.Downloader;
 import org.json.JSONObject;
 
 public class Transmission extends Downloader {

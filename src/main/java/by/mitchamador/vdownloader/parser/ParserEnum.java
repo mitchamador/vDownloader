@@ -1,6 +1,6 @@
-package by.mitchamador.parser;
+package by.mitchamador.vdownloader.parser;
 
-import by.mitchamador.parser.items.*;
+import by.mitchamador.vdownloader.parser.items.*;
 
 /**
  * Created by vicok on 31.05.2016.

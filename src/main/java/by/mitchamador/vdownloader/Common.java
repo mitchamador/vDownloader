@@ -1,9 +1,9 @@
-package by.mitchamador;
+package by.mitchamador.vdownloader;
 
-import by.mitchamador.downloader.Downloader;
-import by.mitchamador.downloader.DownloaderEnum;
-import by.mitchamador.parser.Parser;
-import by.mitchamador.parser.ParserEnum;
+import by.mitchamador.vdownloader.downloader.Downloader;
+import by.mitchamador.vdownloader.downloader.DownloaderEnum;
+import by.mitchamador.vdownloader.parser.Parser;
+import by.mitchamador.vdownloader.parser.ParserEnum;
 
 import java.io.ByteArrayInputStream;
 import java.io.FileOutputStream;
@@ -15,7 +15,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 
-import static by.mitchamador.Common.LogLevel.*;
+import static by.mitchamador.vdownloader.Common.LogLevel.*;
 
 /**
  * Created by vicok on 31.05.2016.

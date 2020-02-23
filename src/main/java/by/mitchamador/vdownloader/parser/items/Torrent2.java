@@ -1,7 +1,7 @@
-package by.mitchamador.parser.items;
+package by.mitchamador.vdownloader.parser.items;
 
-import by.mitchamador.Common;
-import by.mitchamador.parser.Parser;
+import by.mitchamador.vdownloader.Common;
+import by.mitchamador.vdownloader.parser.Parser;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 

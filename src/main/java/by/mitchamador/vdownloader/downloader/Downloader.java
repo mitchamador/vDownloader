@@ -1,9 +1,9 @@
-package by.mitchamador.downloader;
+package by.mitchamador.vdownloader.downloader;
 
-import by.mitchamador.Common;
-import by.mitchamador.UrlItem;
-import by.mitchamador.UrlItemDB;
-import by.mitchamador.parser.Parser;
+import by.mitchamador.vdownloader.Common;
+import by.mitchamador.vdownloader.UrlItem;
+import by.mitchamador.vdownloader.UrlItemDB;
+import by.mitchamador.vdownloader.parser.Parser;
 import org.json.JSONObject;
 import sun.misc.BASE64Encoder;
 
@@ -13,7 +13,7 @@ import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
-import static by.mitchamador.Common.LogLevel.*;
+import static by.mitchamador.vdownloader.Common.LogLevel.*;
 
 public abstract class Downloader {
 

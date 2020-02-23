@@ -1,6 +1,6 @@
-package by.mitchamador.parser;
+package by.mitchamador.vdownloader.parser;
 
-import by.mitchamador.Common;
+import by.mitchamador.vdownloader.Common;
 import org.jsoup.Connection;
 import org.jsoup.HttpStatusException;
 import org.jsoup.Jsoup;
@@ -11,8 +11,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-import static by.mitchamador.Common.LogLevel.LOGLEVEL_DEFAULT;
-import static by.mitchamador.Common.LogLevel.LOGLEVEL_VERBOSE;
+import static by.mitchamador.vdownloader.Common.LogLevel.LOGLEVEL_DEFAULT;
+import static by.mitchamador.vdownloader.Common.LogLevel.LOGLEVEL_VERBOSE;
 
 /**
  * Created by vicok on 31.05.2016.

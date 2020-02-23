@@ -1,4 +1,4 @@
-package by.mitchamador;
+package by.mitchamador.vdownloader;
 
 import org.tmatesoft.sqljet.core.SqlJetException;
 import org.tmatesoft.sqljet.core.table.ISqlJetCursor;

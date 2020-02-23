@@ -1,4 +1,4 @@
-package by.mitchamador;
+package by.mitchamador.vdownloader;
 
 import org.junit.Test;
 

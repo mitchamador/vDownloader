@@ -5,7 +5,6 @@ import org.tmatesoft.sqljet.core.table.ISqlJetCursor;
 
 import java.io.Serializable;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.Date;
 
 /**
@@ -80,6 +79,7 @@ public class UrlItem implements Serializable {
     }
 
     public static String filterTags(String pattern) {
+/*
         if (pattern.contains("%DATE1%")) {
             pattern = pattern.replace("%DATE1%", new SimpleDateFormat("dd/MM/yyyy").format(Calendar.getInstance().getTime()));
         }
@@ -90,6 +90,8 @@ public class UrlItem implements Serializable {
             long number = 1 + (new Date().getTime() - start.getTimeInMillis()) / (24 * 60 * 60 * 1000);
             pattern = pattern.replace("%DOM2SERIE%", number + "");
         }
+*/
+        // rutor.info series pattern
         if (pattern.contains("%SERIESPATTERN%")) {
             pattern = pattern.replace("%SERIESPATTERN%", "\\[(S[0-9]{2}|([0-9]{2}(x|х))?(01((-[0-9]{2})?( из [0-9]{2})?)?)?)]");
         }
